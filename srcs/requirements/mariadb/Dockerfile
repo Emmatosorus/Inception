@@ -1,22 +1,23 @@
 FROM debian:bullseye
 
-RUN apt update -y
-RUN apt upgrade -y
+RUN apt update -y && apt upgrade -y && apt install mariadb-server -y
 
-RUN mkdir /script
+# Create directory for volume
+RUN mkdir -p /var/lib/mysql
 
-RUN apt install mariadb-server -y
+# Copy the initialization script
+COPY tools/mariadb_setup.sh /usr/local/bin/mariadb_setup.sh
+RUN chmod +x /usr/local/bin/mariadb_setup.sh
 
-RUN /etc/init.d/mariadb start
+# Set proper permissions
+RUN chown -R mysql:mysql /var/lib/mysql
 
-COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
+# Define volume mount point
+VOLUME ["/var/lib/mysql"]
 
-COPY tools/mariadb_setup.sh	/script
+# Expose the default MySQL port
+EXPOSE 3306
 
-RUN chmod +x /script/mariadb_setup.sh
-
-ENTRYPOINT [ "/script/mariadb_setup.sh" ]
-CMD ["mysqld_safe"]
-
-
-
+# Use the custom initialization script
+ENTRYPOINT ["/usr/local/bin/mariadb_setup.sh"]
+CMD ["mysqld", "--bind-address=0.0.0.0"]

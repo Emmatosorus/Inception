@@ -1,30 +1,44 @@
 FROM debian:bullseye
 
-RUN apt update -y
-RUN apt upgrade -y
+ENV PHP_VERSION=7.4 \
+    WORDPRESS_VERSION=6.3.2
 
-RUN apt-get -y install wget
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y \
+        php${PHP_VERSION} \
+        php${PHP_VERSION}-fpm \
+        php${PHP_VERSION}-mysql \
+        php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-gd \
+        php${PHP_VERSION}-mbstring \
+        php${PHP_VERSION}-curl \
+        php${PHP_VERSION}-zip \
+        mariadb-client \
+        curl \
+        unzip && \
+    apt-get clean
 
-RUN apt-get install -y php7.4 \
-					    php-fpm \
-						php-mysql \
-						mariadb-client
+# Configure PHP-FPM to use TCP instead of Unix socket
+RUN mkdir -p /run/php && \
+    sed -i 's/listen = \/run\/php\/php7.4-fpm.sock/listen = 9000/g' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf && \
+    sed -i 's/;daemonize = yes/daemonize = no/' /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
 
-RUN wget https://fr.wordpress.org/wordpress-6.7-fr_FR.tar.gz -P /var/www
+WORKDIR /var/www/html
+RUN curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz" && \
+    tar -xzf wordpress.tar.gz --strip-components=1 && \
+    rm wordpress.tar.gz
 
-RUN cd /var/www && tar -xzf wordpress-6.7-fr_FR.tar.gz && rm wordpress-6.7-fr_FR.tar.gz
+RUN chown -R www-data:www-data /var/www/html
 
-RUN	chown -R root:root /var/www/wordpress
+# Create initialization script
+COPY tools/wordpress_setup.sh /usr/local/bin/wordpress_setup.sh
+RUN chmod +x /usr/local/bin/wordpress_setup.sh
 
-COPY conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+EXPOSE 9000
 
-RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+VOLUME ["/var/www/html"]
 
-RUN chmod +x wp-cli.phar
-
-RUN mv wp-cli.phar /usr/local/bin/wp
-
-COPY tools/auto_config.sh /var/www/wordpress/conf/auto_config.sh
-
-CMD [ "sh", "/var/www/wordpress/conf/auto_config.sh" ]
-# CMD [ "bash" ]
+# Use the setup script as entrypoint
+ENTRYPOINT ["/usr/local/bin/wordpress_setup.sh"]
+CMD ["php-fpm7.4", "-F"]
