@@ -19,7 +19,6 @@ RUN apt-get update -y && \
         unzip && \
     apt-get clean
 
-# Configure PHP-FPM to use TCP instead of Unix socket
 RUN mkdir -p /run/php && \
     sed -i 's/listen = \/run\/php\/php7.4-fpm.sock/listen = 9000/g' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf && \
     sed -i 's/;daemonize = yes/daemonize = no/' /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
@@ -31,7 +30,6 @@ RUN curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_V
 
 RUN chown -R www-data:www-data /var/www/html
 
-# Create initialization script
 COPY tools/wordpress_setup.sh /usr/local/bin/wordpress_setup.sh
 RUN chmod +x /usr/local/bin/wordpress_setup.sh
 
@@ -39,6 +37,8 @@ EXPOSE 9000
 
 VOLUME ["/var/www/html"]
 
-# Use the setup script as entrypoint
 ENTRYPOINT ["/usr/local/bin/wordpress_setup.sh"]
+
+# Change version if ever you change PHP_VERSION
+# (I don't use the variable because I'm not alowed to..)
 CMD ["php-fpm7.4", "-F"]

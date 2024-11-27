@@ -17,6 +17,7 @@ services:
 
     ports:
       - "443:443"
+
     restart:
       on-failure
     
@@ -36,6 +37,7 @@ services:
 
     expose:
       - "3306"
+
     restart:
       on-failure
 
@@ -49,7 +51,7 @@ services:
       - wordpress_data:/var/www/html
 
     build:
-      context: requirements/wordpress  # Path to the WordPress Dockerfile
+      context: requirements/wordpress
 
     depends_on:
       - mariadb
@@ -59,12 +61,6 @@ services:
 
     expose:
       - "9000"
-
-    environment:
-      WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_NAME: ${SQL_DATABASE}
-      WORDPRESS_DB_USER: ${SQL_USER}
-      WORDPRESS_DB_PASSWORD: ${SQL_PASSWORD}
 
     restart: 
       on-failure
