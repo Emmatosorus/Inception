@@ -24,6 +24,7 @@ RUN mkdir -p /run/php && \
     sed -i 's/;daemonize = yes/daemonize = no/' /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
 
 WORKDIR /var/www/html
+
 RUN curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz" && \
     tar -xzf wordpress.tar.gz --strip-components=1 && \
     rm wordpress.tar.gz
@@ -33,7 +34,7 @@ RUN chown -R www-data:www-data /var/www/html
 COPY tools/wordpress_setup.sh /usr/local/bin/wordpress_setup.sh
 RUN chmod +x /usr/local/bin/wordpress_setup.sh
 
-EXPOSE 9000
+# EXPOSE 9000
 
 VOLUME ["/var/www/html"]
 

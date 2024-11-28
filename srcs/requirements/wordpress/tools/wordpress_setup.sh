@@ -20,12 +20,12 @@ if [ ! -f "wp-config.php" ] || [ ! -d "wp-content" ]; then
         --dbname=${SQL_DATABASE} \
         --dbuser=${SQL_USER} \
         --dbpass=${SQL_PASSWORD} \
-        --dbhost=mariadb:3306 \
+        --dbhost=${WORDPRESS_DB_HOST} \
         --allow-root
     
     wp core install \
         --url=https://epolitze.42.fr \
-        --title="Inception" \
+        --title="Kill me now" \
         --admin_user=${WORDPRESS_DB_USER} \
         --admin_password=${WORDPRESS_DB_PASSWORD} \
         --admin_email=supervisor@example.com \

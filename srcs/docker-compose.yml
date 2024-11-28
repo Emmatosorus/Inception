@@ -7,7 +7,7 @@ services:
       - wordpress_data:/var/www/html
 
     networks:
-      - inception
+      - wp-nginx
 
     build:
       context: requirements/nginx
@@ -31,7 +31,7 @@ services:
       - mariadb_data:/var/lib/mysql
 
     networks:
-      - inception
+      - mariadb-wp
     build:
       context: requirements/mariadb
 
@@ -57,7 +57,8 @@ services:
       - mariadb
 
     networks:
-      - inception
+      - wp-nginx
+      - mariadb-wp
 
     expose:
       - "9000"
@@ -69,7 +70,9 @@ services:
       - .env
 
 networks:
-  inception:
+  wp-nginx:
+    driver: bridge
+  mariadb-wp:
     driver: bridge
 
 volumes:

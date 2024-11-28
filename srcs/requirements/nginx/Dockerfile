@@ -5,10 +5,18 @@ RUN apt update -y && apt upgrade -y && \
 
 RUN mkdir -p /etc/nginx/ssl /var/run/nginx
 
+# Here we generate a self-signed ssl certificate
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -out /etc/nginx/ssl/inception.crt \
     -keyout /etc/nginx/ssl/inception.key \
-    -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=epolitze.42.fr/UID=epolitze"
+    -subj "/C=FR/ST=ARA/L=Lyon/O=\"42 Lyon Auvergne Rhone-Alpes\"/OU=42/CN=epolitze.42.fr/UID=epolitze"
+# C = Country
+# ST = State
+# L = Location
+# O = Organization
+# OU = Organizational Unit
+# CN = Common Name (Server domain)
+# UID = User ID 
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 

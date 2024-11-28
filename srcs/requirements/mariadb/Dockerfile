@@ -11,7 +11,7 @@ RUN chown -R mysql:mysql /var/lib/mysql
 
 VOLUME ["/var/lib/mysql"]
 
-EXPOSE 3306
+# EXPOSE 3306
 
 ENTRYPOINT ["/usr/local/bin/mariadb_setup.sh"]
 CMD ["mysqld", "--bind-address=0.0.0.0"]
