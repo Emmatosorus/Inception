@@ -7,6 +7,7 @@ done
 
 cd /var/www/html
 
+
 if [ ! -f "wp-config.php" ] || [ ! -d "wp-content" ]; then
     rm -rf *
     
@@ -28,7 +29,7 @@ if [ ! -f "wp-config.php" ] || [ ! -d "wp-content" ]; then
         --title="Kill me now" \
         --admin_user=${WORDPRESS_DB_USER} \
         --admin_password=${WORDPRESS_DB_PASSWORD} \
-        --admin_email=supervisor@example.com \
+        --admin_email=emma@student.42lyon.fr \
         --allow-root
         
     chown -R www-data:www-data /var/www/html

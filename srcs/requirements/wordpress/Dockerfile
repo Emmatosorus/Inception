@@ -29,12 +29,13 @@ RUN curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_V
     tar -xzf wordpress.tar.gz --strip-components=1 && \
     rm wordpress.tar.gz
 
+RUN mkdir -p /var/www/html
 RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
 
 COPY tools/wordpress_setup.sh /usr/local/bin/wordpress_setup.sh
 RUN chmod +x /usr/local/bin/wordpress_setup.sh
 
-# EXPOSE 9000
 
 VOLUME ["/var/www/html"]
 

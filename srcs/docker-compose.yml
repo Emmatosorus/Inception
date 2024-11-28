@@ -4,7 +4,7 @@ services:
     container_name: nginx
 
     volumes:
-      - wordpress_data:/var/www/html
+      - wordpress:/var/www/html
 
     networks:
       - wp-nginx
@@ -28,7 +28,7 @@ services:
     container_name: mariadb
 
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - mariadb:/var/lib/mysql
 
     networks:
       - mariadb-wp
@@ -48,7 +48,7 @@ services:
     container_name: wordpress
 
     volumes:
-      - wordpress_data:/var/www/html
+      - wordpress:/var/www/html
 
     build:
       context: requirements/wordpress
@@ -76,7 +76,15 @@ networks:
     driver: bridge
 
 volumes:
-  mariadb_data:
+  wordpress:
     driver: local
-  wordpress_data:
-    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/wordpress
+  mariadb:
+    driver: local 
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/mariadb

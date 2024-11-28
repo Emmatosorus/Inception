@@ -3,7 +3,7 @@
 mysqld_safe --skip-networking &
 sleep 5
 
-mysql -u root <<-EOSQL
+mysql --user=root --password=${SQL_ROOT_PASSWORD} <<-EOSQL
     CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;
     CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASSWORD}';
     GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'%';
